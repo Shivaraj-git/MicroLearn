@@ -66,22 +66,19 @@ public class QuizService {
     /** The quiz WITHOUT the correct answers. */
     public QuizView forStudent(Long courseId, AuthUser user) {
         requireAccess(courseId, user);
-        QuizView view = tx.execute(status -> {
-            Quiz quiz = findQuiz(courseId);   // 404 if the course has no quiz
+        return tx.execute(status -> {
+            Quiz quiz = findQuiz(courseId);
             List<QuestionView> questions = quiz.getQuestions().stream()
                     .map(q -> new QuestionView(q.getId(), q.getText(),
                             q.getOptions().stream().map(o -> new OptionView(o.getId(), o.getText())).toList()))
                     .toList();
             return new QuizView(quiz.getId(), quiz.getPassMark(), questions);
         });
-        requireLessonsDone(courseId, user);   // 403 until every lesson is done
-        return view;
     }
 
     /** Grades the answers, saves the attempt, and may complete the course. */
     public AttemptResult submit(Long courseId, SubmitAttemptRequest req, AuthUser user) {
         requireAccess(courseId, user);
-        requireLessonsDone(courseId, user);
 
         AttemptResult result = tx.execute(status -> {
             Quiz quiz = findQuiz(courseId);
@@ -130,12 +127,6 @@ public class QuizService {
     }
 
     // ===================== helpers =====================
-
-    private void requireLessonsDone(Long courseId, AuthUser user) {
-        if (!progress.allLessonsDone(courseId, user)) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "Finish all the lessons before taking the quiz");
-        }
-    }
 
     private Quiz findQuiz(Long courseId) {
         return quizzes.findByCourseId(courseId)

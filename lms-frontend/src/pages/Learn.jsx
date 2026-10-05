@@ -20,9 +20,7 @@ export default function Learn() {
         setCurrent(c.lessons.find((l) => !p.completedLessons.includes(l.position))?.position ?? 1)
       })
       .catch((e) => setError(e.message))
-    api(`/api/quizzes/courses/${courseId}`)
-      .then(() => setHasQuiz(true))
-      .catch((e) => { if (e.status === 403) setHasQuiz(true) })   // 403 = a quiz exists but is still locked
+    api(`/api/quizzes/courses/${courseId}`).then(() => setHasQuiz(true)).catch(() => {})
   }, [courseId])
 
   if (error) {
@@ -37,7 +35,6 @@ export default function Learn() {
 
   const done = progress.completedLessons
   const total = course.lessons.length
-  const allDone = done.length >= total
   const lesson = course.lessons.find((l) => l.position === current) || course.lessons[0]
   const lessonDone = done.includes(lesson.position)
 
@@ -66,7 +63,7 @@ export default function Learn() {
           Course completed. Your certificate will appear under <Link to="/certificates">Certificates</Link> in a few seconds.
         </div>
       )}
-      {allDone && !progress.courseCompleted && hasQuiz && (
+      {done.length >= total && !progress.courseCompleted && hasQuiz && (
         <div className="notice notice-ok">All lessons are done. Pass the quiz to finish the course.</div>
       )}
 
@@ -80,15 +77,6 @@ export default function Learn() {
               </button>
             </li>
           ))}
-          {hasQuiz && (
-            <li className="quiz-item">
-              {allDone ? (
-                <Link to={`/learn/${courseId}/quiz`}>Quiz <span className="done">Open</span></Link>
-              ) : (
-                <span className="locked" aria-disabled="true">Quiz <small>Locked until all lessons are done</small></span>
-              )}
-            </li>
-          )}
         </ul>
         <section>
           <h2>{lesson.title}</h2>
@@ -98,6 +86,7 @@ export default function Learn() {
             <button className="btn" disabled={busy || lessonDone} onClick={complete}>
               {lessonDone ? 'Completed' : busy ? 'Saving…' : 'Mark as complete'}
             </button>
+            {hasQuiz && <Link className="btn btn-line" to={`/learn/${courseId}/quiz`}>Take the quiz</Link>}
           </div>
         </section>
       </div>
