@@ -39,8 +39,12 @@ function MyLearning() {
         const enrolled = enrollments.filter((e) => e.status === 'CONFIRMED')
         const courses = (await Promise.all(enrolled.map(async (e) => {
           try {
+            let title = e.courseTitle
+            if (!title) {
+              try { title = (await api(`/api/catalog/${e.courseId}`)).title } catch { /* unavailable */ }
+            }
             const p = await api(`/api/progress/courses/${e.courseId}`)
-            return { id: e.courseId, title: e.courseTitle || `Course #${e.courseId}`,
+            return { id: e.courseId, title: title || `Course #${e.courseId}`,
                      done: p.completedLessons.length, total: p.totalLessons, completed: p.courseCompleted }
           } catch {
             return null   // no access, or the course is not available right now: skip it
