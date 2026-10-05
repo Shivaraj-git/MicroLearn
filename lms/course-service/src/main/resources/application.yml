@@ -1,0 +1,39 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: course-service
+  # WRITE database (commands save here)
+  datasource:
+    url: jdbc:mysql://localhost:3306/lms_course_write
+    username: lms
+    password: lms
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    publisher-confirm-type: correlated   # broker confirms it received each message
+    listener:
+      simple:
+        retry:                           # retry a failing message 3 times,
+          enabled: true                  # then send it to the dead-letter queue
+          max-attempts: 3
+          initial-interval: 1s
+          multiplier: 2
+
+app:
+  progress-service-url: http://localhost:8085
+  # READ database (catalog queries read from here)
+  read-datasource:
+    url: jdbc:mysql://localhost:3306/lms_course_read
+    username: lms
+    password: lms
+  jwt:
+    # MUST be exactly the same as identity-service
+    secret: change-this-secret-to-something-long-and-random-123456

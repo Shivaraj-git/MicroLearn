@@ -1,0 +1,4 @@
+1. Paste in RabbitMQ Command prompt
+rabbitmq-server.bat
+
+2. Open http://localhost:15672 in your browser and log in with guest / guest.

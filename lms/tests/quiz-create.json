@@ -1,0 +1,20 @@
+{
+  "passMark": 60,
+  "questions": [
+    {
+      "text": "What is Spring Boot?",
+      "options": [
+        { "text": "A Java framework", "correct": true },
+        { "text": "A database", "correct": false }
+      ]
+    },
+    {
+      "text": "Which port does an embedded Tomcat use by default?",
+      "options": [
+        { "text": "8080", "correct": true },
+        { "text": "3306", "correct": false },
+        { "text": "5672", "correct": false }
+      ]
+    }
+  ]
+}

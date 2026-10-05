@@ -1,0 +1,31 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: identity-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/lms_identity
+    username: lms
+    password: lms
+  jpa:
+    hibernate:
+      ddl-auto: validate      # Flyway creates tables, Hibernate only checks them
+    open-in-view: false
+  flyway:
+    enabled: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    publisher-confirm-type: correlated
+
+app:
+  admin:                      # created automatically on first start
+    email: admin@lms.com
+    password: Admin@1234
+  jwt:
+    # must be at least 32 characters; change it for real use
+    secret: change-this-secret-to-something-long-and-random-123456
+    expiration-minutes: 60

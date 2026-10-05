@@ -1,0 +1,33 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: progress-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/lms_progress
+    username: lms
+    password: lms
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    publisher-confirm-type: correlated
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 1s
+          multiplier: 2
+
+app:
+  course-service-url: http://localhost:8082
+  jwt:
+    # MUST be exactly the same as identity-service
+    secret: change-this-secret-to-something-long-and-random-123456

@@ -1,0 +1,1 @@
+ALTER TABLE enrollments ADD COLUMN course_title VARCHAR(200) NOT NULL DEFAULT '';

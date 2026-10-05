@@ -1,0 +1,56 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:                      # lets a browser frontend call the gateway
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: identity
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/auth/**, /api/users/**, /api/admin/users/**
+
+        - id: course
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/courses/**, /api/catalog/**, /api/admin/courses/**, /api/learn/**
+
+        - id: enrollment
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/enrollments/**, /api/admin/enrollments/**
+
+        - id: progress
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/progress/**
+
+        - id: notification
+          uri: http://localhost:8086
+          predicates:
+            - Path=/api/notifications/**
+
+        - id: certificate
+          uri: http://localhost:8087
+          predicates:
+            - Path=/api/certificates/**
+
+        - id: quizzes
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/quizzes/**
+
+        # Payment (8083) has NO route on purpose: only other services talk to it.
+
+app:
+  jwt:
+    # MUST be exactly the same as identity-service
+    secret: change-this-secret-to-something-long-and-random-123456
